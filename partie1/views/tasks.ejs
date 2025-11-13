@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tâches</title>
+</head>
+<body>
+  <h1>Liste des tâches</h1>
+
+  <ul>
+    <% tasks.forEach(task => { %>
+      <li><%= task.title %> - <%= task.done ? "✔️" : "❌" %></li>
+    <% }) %>
+  </ul>
+<form action="/api/tasks" method="POST">
+  <input type="text" name="title" placeholder="Nouvelle tâche" required>
+  <button type="submit">Ajouter</button>
+</form>
+
+  <a href="/">Retour à l'accueil</a>
+</body>
+</html>
