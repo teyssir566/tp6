@@ -8,16 +8,55 @@
 <body>
   <h1>Liste des tâches</h1>
 
-  <ul>
+  <ul id="task-list">
     <% tasks.forEach(task => { %>
-      <li><%= task.title %> - <%= task.done ? "✔️" : "❌" %></li>
+      <li data-id="<%= task.id %>"><%= task.title %> - <%= task.done ? "✔️" : "❌" %></li>
     <% }) %>
   </ul>
-<form action="/api/tasks" method="POST">
-  <input type="text" name="title" placeholder="Nouvelle tâche" required>
-  <button type="submit">Ajouter</button>
-</form>
+
+  <form id="task-form">
+    <input type="text" name="title" placeholder="Nouvelle tâche" required>
+    <button type="submit">Ajouter</button>
+  </form>
 
   <a href="/">Retour à l'accueil</a>
+
+  <script>
+    const form = document.getElementById('task-form');
+    const taskList = document.getElementById('task-list');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); 
+
+      const title = form.title.value.trim();
+      if (!title) return;
+
+      try {
+        const response = await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          alert(error.error);
+          return;
+        }
+
+        const newTask = await response.json();
+
+        const li = document.createElement('li');
+        li.setAttribute('data-id', newTask.id);
+        li.textContent = `${newTask.title} - ❌`;
+        taskList.appendChild(li);
+
+        form.reset(); /
+      } catch (err) {
+        console.error(err);
+        alert('Erreur lors de l’ajout de la tâche.');
+      }
+    });
+  </script>
 </body>
 </html>
